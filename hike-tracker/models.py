@@ -10,7 +10,7 @@ def create_db():
 def create_hike_table():
     hike_table_query = '''create table hikes(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		hike_name NOT NULL,
+		hike_name TEXT NOT NULL,
 		hike_date TEXT,
 		mountain_id INTEGER,
 		comment BLOB
