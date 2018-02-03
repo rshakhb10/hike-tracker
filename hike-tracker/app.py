@@ -1,12 +1,14 @@
+import json
 import sqlite3
 from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 
 @app.route('/hikes', methods = ['GET', 'POST'])
-def get_all_hikes():
+def show_hikes():
     if request.method == 'GET':
-        pass
+        all_hikes = get_all_hikes()
+        return json.dumps(all_hikes)
     elif request.method == 'POST':
         d = request.form
         res = add_hike(d['name'], d['hike_date'], d['mountain'], d['comment'])
@@ -29,9 +31,14 @@ def add_hike(name, hike_date=None, mountain=None, comment=None):
         res = {'status': 0, 'message': 'error happened'}
     return res
 
+def get_all_hikes():
+    with sqlite3.connect('hiketrips.db') as conn:
+        c = conn.cursor()
+        query = '''select * from hikes'''
+        c.execute(query)
+        return c.fetchall()
+
 if __name__ == '__main__':
     app.debug = True
     app.run()
-
-
 
