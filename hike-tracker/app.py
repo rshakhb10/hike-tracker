@@ -15,9 +15,10 @@ def show_hikes():
         return jsonify(res)
 
 @app.route('/hike/<hike_id>', methods = ['GET', 'PUT', 'DELETE'])
-def get_single_hike():
-    pass
-
+def show_hike(hike_id):
+    if request.method == 'GET':
+        hike = get_single_hike(hike_id)
+        return json.dumps(hike)    
 
 def add_hike(name, hike_date=None, mountain=None, comment=None):
     try:
@@ -37,6 +38,13 @@ def get_all_hikes():
         query = '''select * from hikes'''
         c.execute(query)
         return c.fetchall()
+
+def get_single_hike(hike_id):
+    with sqlite3.connect('hiketrips.db') as conn:
+        c = conn.cursor()
+        query = 'select * from hikes where id = ?'
+        c.execute(query, (hike_id,))
+        return c.fetchone()
 
 if __name__ == '__main__':
     app.debug = True
