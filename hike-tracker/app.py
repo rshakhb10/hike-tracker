@@ -1,8 +1,12 @@
 import json
 import sqlite3
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 app = Flask(__name__)
 
+@app.route('/')
+def index():
+    render_template('templates/index.html')
+    
 
 @app.route('/hikes', methods = ['GET', 'POST'])
 def show_hikes():
@@ -45,6 +49,19 @@ def get_single_hike(hike_id):
         query = 'select * from hikes where id = ?'
         c.execute(query, (hike_id,))
         return c.fetchone()
+
+def edit_hike(hike_id, hike_date=None, mountain=None, comment=None):
+    try:
+        with sqlite3.connect('hiketrips.db') as conn:
+            c = conn.cursor()
+            query = '''update hikes set hike_date = ?, mountain = ?, comment = ? 
+            where id = ?'''
+            c.execute(query, (hike_date, mountain, comment, hike_id,))
+            return "Edited hike info!" 
+    except:
+        return "Failed to edit the hike..."
+
+
 
 if __name__ == '__main__':
     app.debug = True
