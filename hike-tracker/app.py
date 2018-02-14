@@ -22,7 +22,14 @@ def show_hikes():
 def show_hike(hike_id):
     if request.method == 'GET':
         hike = get_single_hike(hike_id)
-        return json.dumps(hike)    
+        return json.dumps(hike)
+    elif request.method == 'PUT':
+        d = request.form
+        res = edit_hike(hike_id, d['name'], d['hike_date'], d['mountain'], d['comment'])
+        return jsonify(res)
+    elif request.method = 'DELETE':
+        res = delete_hike(hike_id)
+        return jsonify(hike)
 
 def add_hike(name, hike_date=None, mountain=None, comment=None):
     try:
@@ -61,6 +68,15 @@ def edit_hike(hike_id, hike_date=None, mountain=None, comment=None):
     except:
         return "Failed to edit the hike..."
 
+def delete_hike(hike_id):
+    try:
+        with sqlite3.connect('hiketrips.db') as conn:
+            c = conn.cursor()
+            query = '''delete from hikes where id = ?'''
+            c.execute(query, (hike_id,))
+            return "Deleted hike!" 
+    except:
+        return "Failed to delete the hike..."
 
 
 if __name__ == '__main__':
